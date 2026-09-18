@@ -195,23 +195,25 @@ API key from Module 02 with per-agent client-credentials.
   ```bash
   cd webclient
   npm install
+  cp .env.example .env   # optional — set default agent URLs, see below
   npm run dev
   # → http://localhost:5173
   ```
 
   It has one view: Customer Support and Account Assistant side by side,
   a single input that sends the same prompt to both, and a URL field per
-  pane (defaulting to `:8000` and `:8002`) with a live health chip that
+  pane (defaulting to `:8000` and `:8002`, or to
+  `VITE_CUSTOMER_SUPPORT_URL` / `VITE_ACCOUNT_ASSISTANT_URL` from `.env`
+  if set — see `webclient/.env.example`) with a live health chip that
   reads each agent's `mcp_governed` flag off `/health`.
 
   **If an agent is deployed as a Platform-Hosted Agent** rather than run
-  locally, replace its default `localhost` URL in the web client with
-  its Agent Manager endpoint instead: open the agent's page in the
-  console and copy the URL shown on its environment's **Endpoint**
-  field, then paste that into the matching URL field and blur it to
-  trigger a health check. Same applies to the `curl` fallback commands
-  below — swap `http://localhost:8000` / `:8002` for the deployed
-  endpoint.
+  locally, either set its Agent Manager endpoint in `.env` before
+  starting the dev server, or paste it into the matching URL field on the
+  page and blur it to trigger a health check — both are live-editable
+  regardless of the `.env` default. Same applies to the `curl` fallback
+  commands below — swap `http://localhost:8000` / `:8002` for the
+  deployed endpoint.
 
 ### Step 1 — Side-by-side: the gap, live
 
@@ -320,7 +322,7 @@ grant, scoped to `MCP_GATEWAY_URL` (RFC 8707 `resource` parameter), and
 uses it as a Bearer token on every MCP call — see `_build_mcp_client()` /
 `_mint_agentid_token()` in each agent's `agent.py`: with
 `MCP_GATEWAY_API_KEY` unset, the agent falls through to minting an
-AgentID token instead of sending a static `API-Key` header.
+AgentID token instead of sending a static `x-api-key` header.
 
 ### Step 7 — Demo the side-by-side, governed
 

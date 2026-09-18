@@ -28,7 +28,7 @@ from typing import Any
 
 import requests
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langchain_mcp_adapters.client import MultiServerMCPClient
@@ -130,9 +130,11 @@ def _build_mcp_client() -> MultiServerMCPClient:
 
     Gateway mode, API Key: if MCP_GATEWAY_URL and MCP_GATEWAY_API_KEY are
     both set, calls go through Agent Manager's MCP gateway authenticated
-    with a shared `API-Key` header - matching the MCP server's default
-    API Key security scheme. No per-agent identity, so no per-agent tool
-    policy either - every agent using the same key gets the same access.
+    with a shared `x-api-key` header - matching the MCP server's default
+    API Key security scheme (note: this is a different header name than
+    the LLM gateway's `API-Key`). No per-agent identity, so no per-agent
+    tool policy either - every agent using the same key gets the same
+    access.
 
     Gateway mode, AgentID: if MCP_GATEWAY_URL is set and
     MCP_GATEWAY_API_KEY is not, calls go through Agent Manager's MCP
@@ -153,7 +155,7 @@ def _build_mcp_client() -> MultiServerMCPClient:
 
     api_key = os.environ.get("MCP_GATEWAY_API_KEY")
     headers = (
-        {"API-Key": api_key}
+        {"x-api-key": api_key}
         if api_key
         else {"Authorization": f"Bearer {_mint_agentid_token(mcp_gateway_url)}"}
     )
@@ -230,6 +232,34 @@ def health() -> dict[str, Any]:
     return _ready_payload()
 
 
+# Candidate header names the gateway might use to forward the caller's
+# OAuth identity token downstream. Unconfirmed - this is a discovery aid,
+# not a validated allowlist. Once the real header is confirmed, replace
+# this with an explicit read of that one header and remove the log line.
+CANDIDATE_IDENTITY_HEADERS = (
+    "authorization",
+    "x-jwt-assertion",
+    "x-forwarded-authorization",
+    "x-amp-identity",
+    "x-agent-identity",
+)
+
+
+def _log_incoming_headers(request: Request, sid: str) -> None:
+    """Log request header NAMES only (never values - these can carry
+    bearer tokens/JWTs) so we can identify which header the gateway uses
+    to carry the OAuth token, then narrow to reading just that one.
+    """
+    header_names = list(request.headers.keys())
+    log.info("session=%s incoming header names: %s", sid, header_names)
+
+    present = [name for name in CANDIDATE_IDENTITY_HEADERS if name in request.headers]
+    if present:
+        log.info("session=%s candidate identity headers present: %s", sid, present)
+    else:
+        log.info("session=%s no candidate identity header found among: %s", sid, CANDIDATE_IDENTITY_HEADERS)
+
+
 def _final_text(messages: list[BaseMessage]) -> str:
     for msg in reversed(messages):
         if isinstance(msg, AIMessage):
@@ -246,11 +276,12 @@ def _final_text(messages: list[BaseMessage]) -> str:
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest) -> ChatResponse:
+async def chat(req: ChatRequest, request: Request) -> ChatResponse:
     if not req.message.strip():
         return ChatResponse(response="How can I help you today?")
 
     sid = req.session_id or "_anonymous_"
+    _log_incoming_headers(request, sid)
     history = SESSIONS.get(sid, []) + [HumanMessage(content=req.message)]
 
     try:

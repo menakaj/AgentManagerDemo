@@ -11,9 +11,12 @@ function randomSessionId(prefix) {
 
 let nextMessageId = 1;
 
+const DEFAULT_URL_CS = import.meta.env.VITE_CUSTOMER_SUPPORT_URL || "http://localhost:8000";
+const DEFAULT_URL_AA = import.meta.env.VITE_ACCOUNT_ASSISTANT_URL || "http://localhost:8002";
+
 export default function App() {
-  const [urlCs, setUrlCs] = useState("http://localhost:8000");
-  const [urlAa, setUrlAa] = useState("http://localhost:8002");
+  const [urlCs, setUrlCs] = useState(DEFAULT_URL_CS);
+  const [urlAa, setUrlAa] = useState(DEFAULT_URL_AA);
 
   const healthCs = useHealth(() => urlCs);
   const healthAa = useHealth(() => urlAa);

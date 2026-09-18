@@ -10,7 +10,7 @@ mode:
 | | Direct / BYO mode | Gateway mode (API Key) | Gateway mode (AgentID) |
 |---|---|---|---|
 | LLM | `OPENAI_API_KEY` set, `LLM_GATEWAY_BASE_URL` unset — calls OpenAI directly | `LLM_GATEWAY_BASE_URL` set — routed through Agent Manager's LLM gateway | same |
-| MCP | `MCP_SERVER_URL` set, `MCP_GATEWAY_URL` unset — calls the Accounts MCP server directly | `MCP_GATEWAY_URL` + `MCP_GATEWAY_API_KEY` set — routed through Agent Manager's MCP gateway as an `API-Key` header, no per-agent policy | `MCP_GATEWAY_URL` set, `AMP_AGENTID_CLIENT_ID`/`SECRET`/etc. set, `MCP_GATEWAY_API_KEY` unset — routed through the gateway, authenticated with this agent's own AgentID client-credentials as a Bearer token, subject to per-agent tool policy |
+| MCP | `MCP_SERVER_URL` set, `MCP_GATEWAY_URL` unset — calls the Accounts MCP server directly | `MCP_GATEWAY_URL` + `MCP_GATEWAY_API_KEY` set — routed through Agent Manager's MCP gateway as an `x-api-key` header, no per-agent policy | `MCP_GATEWAY_URL` set, `AMP_AGENTID_CLIENT_ID`/`SECRET`/etc. set, `MCP_GATEWAY_API_KEY` unset — routed through the gateway, authenticated with this agent's own AgentID client-credentials as a Bearer token, subject to per-agent tool policy |
 
 Once tool policy is configured on the AgentID this agent authenticates
 with (see [Module 03, Part B](../../03-agentid-and-oauth2/README.md)),
@@ -27,7 +27,7 @@ this identity is expected to be **permitted** for `open_account` /
 | `LLM_MODEL` | No (default `gpt-4o-mini`) | Model name passed to the LLM gateway/OpenAI. |
 | `MCP_SERVER_URL` | If `MCP_GATEWAY_URL` is unset | Accounts MCP server URL, called directly. |
 | `MCP_GATEWAY_URL` | To enable MCP gateway mode | The Accounts MCP server's URL as fronted by Agent Manager's MCP gateway. Set at initial registration; enables the auth flow below. |
-| `MCP_GATEWAY_API_KEY` | If `MCP_GATEWAY_URL` is set and using the shared API-Key scheme (Module 02) | Sent directly as an `API-Key` header on every MCP call — same pattern as `LLM_GATEWAY_API_KEY`. No AgentID minting, no per-agent identity. |
+| `MCP_GATEWAY_API_KEY` | If `MCP_GATEWAY_URL` is set and using the shared API-Key scheme (Module 02) | Sent directly as an `x-api-key` header on every MCP call — note this is a different header name than `LLM_GATEWAY_API_KEY`'s `API-Key`. No AgentID minting, no per-agent identity. |
 | `AMP_AGENTID_CLIENT_ID` | If `MCP_GATEWAY_URL` is set and using AgentID (Module 03), `MCP_GATEWAY_API_KEY` unset | This agent's own AgentID OAuth2 client ID (client-credentials grant). |
 | `AMP_AGENTID_CLIENT_SECRET` | If `MCP_GATEWAY_URL` is set and using AgentID | This agent's own AgentID client secret. |
 | `AMP_AGENTID_TOKEN_ENDPOINT` | If `MCP_GATEWAY_URL` is set and using AgentID | Token endpoint used to mint the client-credentials access token at startup. |

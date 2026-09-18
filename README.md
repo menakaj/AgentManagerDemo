@@ -43,7 +43,8 @@ history is kept server-side per `session_id`.
   - an LLM gateway endpoint (OpenAI-compatible, `API-Key` header auth) —
     only needed for governed mode
   - an MCP gateway endpoint in front of the Accounts MCP server, secured
-    with an `API-Key` header by default — only needed for gateway mode
+    with an `x-api-key` header by default (a different header name than
+    the LLM gateway's `API-Key`) — only needed for gateway mode
   - per-agent AgentID client-credentials configured on that MCP gateway
     so each agent's identity gets its own tool policy — only needed for
     the AgentID-governed mode
@@ -100,7 +101,8 @@ Modules 02–03:
 - **Gateway mode (API Key)** — set `MCP_GATEWAY_URL` plus
   `MCP_GATEWAY_API_KEY` to a shared API key, matching the MCP server's
   default security scheme in Agent Manager. Calls route through Agent
-  Manager's MCP gateway as an `API-Key` header, but every agent
+  Manager's MCP gateway as an `x-api-key` header (note: a different
+  header name than the LLM gateway's `API-Key`), but every agent
   authenticates with the same key — no per-agent tool policy yet. See
   `_build_mcp_client()` in each agent's `agent.py`.
 - **Gateway mode (AgentID)** — each agent needs its **own** AgentID
@@ -146,8 +148,10 @@ before/after contrast at the tool-access-control step.
   working Agent Manager sample agent - confirm it still matches your
   instance.
 - The MCP gateway supports two auth modes in this demo: a shared static
-  API key sent as an `API-Key` header (`MCP_GATEWAY_API_KEY`, Module 02),
-  or per-agent AgentID OAuth2 client-credentials (Module 03) — each agent
+  API key sent as an `x-api-key` header (`MCP_GATEWAY_API_KEY`, Module
+  02 — note this is a different header name than the LLM gateway's
+  `API-Key`), or per-agent AgentID OAuth2 client-credentials (Module 03)
+  — each agent
   POSTs to `AMP_AGENTID_TOKEN_ENDPOINT` with its own
   `client_id`/`client_secret`, requesting a token scoped to
   `MCP_GATEWAY_URL` via the `resource` parameter (RFC 8707), then sends

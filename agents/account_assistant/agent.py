@@ -123,9 +123,11 @@ def _build_mcp_client() -> MultiServerMCPClient:
 
     Gateway mode, API Key: if MCP_GATEWAY_URL and MCP_GATEWAY_API_KEY are
     both set, calls go through Agent Manager's MCP gateway authenticated
-    with a shared `API-Key` header - matching the MCP server's default
-    API Key security scheme. No per-agent identity, so no per-agent tool
-    policy either - every agent using the same key gets the same access.
+    with a shared `x-api-key` header - matching the MCP server's default
+    API Key security scheme (note: this is a different header name than
+    the LLM gateway's `API-Key`). No per-agent identity, so no per-agent
+    tool policy either - every agent using the same key gets the same
+    access.
 
     Gateway mode, AgentID: if MCP_GATEWAY_URL is set and
     MCP_GATEWAY_API_KEY is not, calls go through Agent Manager's MCP
@@ -146,7 +148,7 @@ def _build_mcp_client() -> MultiServerMCPClient:
 
     api_key = os.environ.get("MCP_GATEWAY_API_KEY")
     headers = (
-        {"API-Key": api_key}
+        {"x-api-key": api_key}
         if api_key
         else {"Authorization": f"Bearer {_mint_agentid_token(mcp_gateway_url)}"}
     )

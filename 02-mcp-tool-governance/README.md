@@ -14,8 +14,9 @@ now reachable only through it. Per-agent, per-tool access control is
 This is where the demo moves each agent from **direct MCP mode**
 (`MCP_GATEWAY_URL` unset, calls go straight to the MCP server) to
 **gateway mode** (`MCP_GATEWAY_URL` + `MCP_GATEWAY_API_KEY` set — calls
-routed through Agent Manager, authenticated with an `API-Key` header).
-Both modes are the same
+routed through Agent Manager, authenticated with an `x-api-key` header —
+a different header name than the LLM gateway's `API-Key`). Both modes
+are the same
 [`agents/customer_support`](../agents/customer_support) /
 [`agents/account_assistant`](../agents/account_assistant) code — the
 switch is entirely in which env vars are set, see `_build_mcp_client()`
@@ -59,7 +60,8 @@ isn't in the path at all yet.
 2. Set the authentication type to **API Key** (the default scheme) and
    generate/copy the key. This one key is what every agent in this
    module authenticates the MCP gateway with — no per-agent identity
-   yet.
+   yet. Note the header name this scheme validates — `x-api-key` — it's
+   different from the LLM gateway's `API-Key` header.
 
 ## Step 3 — Bind each deployed agent to the MCP server
 
@@ -74,7 +76,9 @@ Locally (outside Agent Manager), the equivalent is setting
 `MCP_GATEWAY_URL` and `MCP_GATEWAY_API_KEY` by hand in each agent's
 `.env` — see `_build_mcp_client()` in each agent's `agent.py`: when
 `MCP_GATEWAY_API_KEY` is set, the agent sends it directly as an
-`API-Key` header rather than minting an AgentID token.
+`x-api-key` header rather than minting an AgentID token. Note this is a
+different header name than the LLM gateway's `API-Key` — the MCP
+server's default security scheme validates `x-api-key`.
 
 ## Step 4 — Confirm the connection, both agents unrestricted
 
@@ -106,7 +110,7 @@ closed in Module 03, once each agent gets its own AgentID identity.
 | | Before this module | After |
 |---|---|---|
 | Agent code | Unmodified | Unmodified |
-| MCP calls | Direct to the MCP server, unauthenticated | Through Agent Manager's MCP gateway, `API-Key` header authenticated |
+| MCP calls | Direct to the MCP server, unauthenticated | Through Agent Manager's MCP gateway, `x-api-key` header authenticated |
 | Tool access | Any agent, any tool | Still any agent, any tool — access control comes in Module 03 |
 
 ## Going further
