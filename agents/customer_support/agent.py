@@ -258,9 +258,11 @@ def _decode_jwt_claims(token: str) -> dict[str, Any] | None:
 
 
 def _log_identity_header(request: Request, sid: str) -> None:
-    """Log non-PII structural claims of the identity token (iss/aud/exp
-    and a one-way hash of sub) - never the raw token or PII claims like
-    email/name, which would be replayable or personally identifying.
+    """TEMPORARY discovery logging: dumps all decoded JWT claims (may
+    include PII) to identify what the gateway sends. Never logs the raw
+    token itself. Must be removed/narrowed before this runs anywhere logs
+    are retained or shared - see conversation, user has asked to clean up
+    after finishing discovery.
     """
     token = request.headers.get(IDENTITY_HEADER)
     if not token:
@@ -272,12 +274,7 @@ def _log_identity_header(request: Request, sid: str) -> None:
         log.warning("session=%s %s present but not a decodable JWT", sid, IDENTITY_HEADER)
         return
 
-    sub = claims.get("sub")
-    sub_hash = hashlib.sha256(sub.encode()).hexdigest()[:16] if sub else None
-    log.info(
-        "session=%s %s: iss=%s aud=%s exp=%s sub_hash=%s",
-        sid, IDENTITY_HEADER, claims.get("iss"), claims.get("aud"), claims.get("exp"), sub_hash,
-    )
+    log.info("session=%s %s claims: %s", sid, IDENTITY_HEADER, claims)
 
 
 def _final_text(messages: list[BaseMessage]) -> str:
