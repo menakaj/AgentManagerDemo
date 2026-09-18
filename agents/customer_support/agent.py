@@ -21,6 +21,8 @@ set — no code change, no separate "stage" build:
 
 from __future__ import annotations
 
+import base64
+import json
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -232,32 +234,44 @@ def health() -> dict[str, Any]:
     return _ready_payload()
 
 
-# Candidate header names the gateway might use to forward the caller's
-# OAuth identity token downstream. Unconfirmed - this is a discovery aid,
-# not a validated allowlist. Once the real header is confirmed, replace
-# this with an explicit read of that one header and remove the log line.
-CANDIDATE_IDENTITY_HEADERS = (
-    "authorization",
-    "x-jwt-assertion",
-    "x-forwarded-authorization",
-    "x-amp-identity",
-    "x-agent-identity",
-)
+# Confirmed via header-name discovery logging: the gateway forwards the
+# caller's OAuth identity token in this header (not `Authorization`).
+IDENTITY_HEADER = "x-forwarded-authorization"
 
 
-def _log_incoming_headers(request: Request, sid: str) -> None:
-    """Log request header NAMES only (never values - these can carry
-    bearer tokens/JWTs) so we can identify which header the gateway uses
-    to carry the OAuth token, then narrow to reading just that one.
+def _decode_jwt_claims(token: str) -> dict[str, Any] | None:
+    """Decode a JWT's payload claims without verifying the signature.
+
+    This is for logging/debugging identity only - never use the returned
+    claims to make an authorization decision, since they're unverified.
     """
-    header_names = list(request.headers.keys())
-    log.info("session=%s incoming header names: %s", sid, header_names)
+    parts = token.removeprefix("Bearer ").strip().split(".")
+    if len(parts) != 3:
+        return None
+    payload = parts[1]
+    padded = payload + "=" * (-len(payload) % 4)
+    try:
+        return json.loads(base64.urlsafe_b64decode(padded))
+    except (ValueError, json.JSONDecodeError):
+        return None
 
-    present = [name for name in CANDIDATE_IDENTITY_HEADERS if name in request.headers]
-    if present:
-        log.info("session=%s candidate identity headers present: %s", sid, present)
-    else:
-        log.info("session=%s no candidate identity header found among: %s", sid, CANDIDATE_IDENTITY_HEADERS)
+
+def _log_identity_header(request: Request, sid: str) -> None:
+    """Log the decoded claims of the identity token, never the raw token
+    itself - the raw value is a live bearer credential that would be
+    replayable by anyone with log access.
+    """
+    token = request.headers.get(IDENTITY_HEADER)
+    if not token:
+        log.info("session=%s no %s header present", sid, IDENTITY_HEADER)
+        return
+
+    claims = _decode_jwt_claims(token)
+    if claims is None:
+        log.warning("session=%s %s present but not a decodable JWT", sid, IDENTITY_HEADER)
+        return
+
+    log.info("session=%s %s claims: %s", sid, IDENTITY_HEADER, claims)
 
 
 def _final_text(messages: list[BaseMessage]) -> str:
@@ -281,7 +295,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         return ChatResponse(response="How can I help you today?")
 
     sid = req.session_id or "_anonymous_"
-    _log_incoming_headers(request, sid)
+    _log_identity_header(request, sid)
     history = SESSIONS.get(sid, []) + [HumanMessage(content=req.message)]
 
     try:
