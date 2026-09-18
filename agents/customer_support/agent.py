@@ -258,11 +258,10 @@ def _decode_jwt_claims(token: str) -> dict[str, Any] | None:
 
 
 def _log_identity_header(request: Request, sid: str) -> None:
-    """TEMPORARY discovery logging: dumps all decoded JWT claims (may
-    include PII) to identify what the gateway sends. Never logs the raw
-    token itself. Must be removed/narrowed before this runs anywhere logs
-    are retained or shared - see conversation, user has asked to clean up
-    after finishing discovery.
+    """Log the caller identity (username, org_id) from the Asgardeo access
+    token forwarded in x-forwarded-authorization. Claims are unverified
+    (no signature check here) - fine for log correlation, not for
+    authorization decisions. Never logs the raw token itself.
     """
     token = request.headers.get(IDENTITY_HEADER)
     if not token:
@@ -274,7 +273,10 @@ def _log_identity_header(request: Request, sid: str) -> None:
         log.warning("session=%s %s present but not a decodable JWT", sid, IDENTITY_HEADER)
         return
 
-    log.info("session=%s %s claims: %s", sid, IDENTITY_HEADER, claims)
+    log.info(
+        "session=%s caller username=%s org_id=%s",
+        sid, claims.get("username"), claims.get("org_id"),
+    )
 
 
 def _final_text(messages: list[BaseMessage]) -> str:
