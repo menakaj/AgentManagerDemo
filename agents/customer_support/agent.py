@@ -22,6 +22,7 @@ set — no code change, no separate "stage" build:
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import logging
 import os
@@ -257,9 +258,9 @@ def _decode_jwt_claims(token: str) -> dict[str, Any] | None:
 
 
 def _log_identity_header(request: Request, sid: str) -> None:
-    """Log the decoded claims of the identity token, never the raw token
-    itself - the raw value is a live bearer credential that would be
-    replayable by anyone with log access.
+    """Log non-PII structural claims of the identity token (iss/aud/exp
+    and a one-way hash of sub) - never the raw token or PII claims like
+    email/name, which would be replayable or personally identifying.
     """
     token = request.headers.get(IDENTITY_HEADER)
     if not token:
@@ -271,7 +272,12 @@ def _log_identity_header(request: Request, sid: str) -> None:
         log.warning("session=%s %s present but not a decodable JWT", sid, IDENTITY_HEADER)
         return
 
-    log.info("session=%s %s claims: %s", sid, IDENTITY_HEADER, claims)
+    sub = claims.get("sub")
+    sub_hash = hashlib.sha256(sub.encode()).hexdigest()[:16] if sub else None
+    log.info(
+        "session=%s %s: iss=%s aud=%s exp=%s sub_hash=%s",
+        sid, IDENTITY_HEADER, claims.get("iss"), claims.get("aud"), claims.get("exp"), sub_hash,
+    )
 
 
 def _final_text(messages: list[BaseMessage]) -> str:
