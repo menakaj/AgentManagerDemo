@@ -279,6 +279,22 @@ def _log_identity_header(request: Request, sid: str) -> None:
     )
 
 
+def _leaf_causes(exc: BaseException) -> list[BaseException]:
+    """Flatten a (possibly nested) ExceptionGroup down to its leaf exceptions.
+
+    agent.ainvoke() runs MCP tool calls via asyncio.TaskGroup internally
+    (langgraph / langchain-mcp-adapters), so a single tool failure —
+    including an Agent Manager gateway denial — surfaces here wrapped in
+    an ExceptionGroup rather than as the original exception.
+    """
+    if isinstance(exc, BaseExceptionGroup):
+        leaves: list[BaseException] = []
+        for sub in exc.exceptions:
+            leaves.extend(_leaf_causes(sub))
+        return leaves
+    return [exc]
+
+
 def _final_text(messages: list[BaseMessage]) -> str:
     for msg in reversed(messages):
         if isinstance(msg, AIMessage):
@@ -314,11 +330,21 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         # transfer_money call is expected to land in when MCP_GATEWAY_URL
         # is set. In direct mode (no gateway), this instead just means a
         # real error reaching the MCP server.
+        #
+        # agent.ainvoke() fans out MCP calls via asyncio.TaskGroup
+        # internally, so failures arrive wrapped in an ExceptionGroup —
+        # unwrap it so the log shows the real cause(s), not just
+        # "1 sub-exception (...)".
+        causes = _leaf_causes(e)
+        cause_summary = "; ".join(f"{type(c).__name__}: {c}" for c in causes)
         if os.environ.get("MCP_GATEWAY_URL"):
-            log.warning("session=%s possible governance denial or error: %s", sid, e)
+            log.warning(
+                "session=%s possible governance denial or error: %s",
+                sid, cause_summary, exc_info=e,
+            )
             reply = GOVERNANCE_DENIAL_MESSAGE
         else:
-            log.exception("session=%s error: %s", sid, e)
+            log.exception("session=%s error: %s", sid, cause_summary)
             reply = "I'm having trouble reaching our systems. Please try again in a moment."
 
     SESSIONS[sid] = history

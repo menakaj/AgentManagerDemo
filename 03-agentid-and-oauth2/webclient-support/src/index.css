@@ -1,113 +1,113 @@
 :root {
-  --ink: #10152a;
-  --ink-soft: #545e7a;
-  --ink-faint: #8890ac;
-  --bg-a: #eef0ff;
-  --bg-b: #e6f6f4;
-  --bg-c: #fbeaf5;
-  --surface: rgba(255, 255, 255, 0.6);
-  --surface-raised: rgba(255, 255, 255, 0.72);
+  --ink: #0b1f33;
+  --ink-soft: #45566b;
+  --ink-faint: #7c8ba0;
+  --bg-a: #eef1f5;
+  --bg-b: #e4e9ef;
+  --bg-c: #edf1ee;
+  --surface: rgba(255, 255, 255, 0.86);
+  --surface-raised: rgba(255, 255, 255, 0.96);
   --surface-solid: #ffffff;
-  --line: rgba(255, 255, 255, 0.55);
-  --line-soft: rgba(16, 21, 42, 0.06);
-  --blur: 22px;
-  --primary: #4f3ff0;
-  --primary-2: #3a2bd6;
-  --primary-grad: linear-gradient(135deg, #6d5bf7 0%, #4227d6 100%);
-  --primary-soft: rgba(79, 63, 240, 0.1);
-  --accent: #0fb88a;
-  --accent-2: #0a9a72;
-  --accent-grad: linear-gradient(135deg, #1fe0ab 0%, #0a9a72 100%);
-  --accent-soft: rgba(15, 184, 138, 0.12);
-  --ok: #0fb88a;
-  --ok-2: #0a9a72;
-  --ok-soft: rgba(15, 184, 138, 0.12);
-  --deny: #e0562a;
-  --deny-2: #b6431e;
-  --deny-soft: rgba(224, 86, 42, 0.12);
-  --token-bg: rgba(16, 21, 42, 0.05);
-  --shadow-sm: 0 1px 2px rgba(16, 21, 42, 0.05);
-  --shadow-md: 0 1px 3px rgba(16, 21, 42, 0.04), 0 14px 32px -12px rgba(79, 63, 240, 0.18);
-  --shadow-lg: 0 20px 50px -12px rgba(79, 63, 240, 0.28), 0 4px 14px rgba(16, 21, 42, 0.08);
-  --ring: 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
-  --glow-primary: 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 8px 24px -6px rgba(79, 63, 240, 0.45);
-  --glow-accent: 0 0 0 1px rgba(255, 255, 255, 0.35) inset, 0 8px 22px -6px rgba(15, 184, 138, 0.5);
-  --radius: 20px;
-  --radius-sm: 13px;
-  --radius-lg: 26px;
+  --line: rgba(11, 31, 51, 0.1);
+  --line-soft: rgba(11, 31, 51, 0.08);
+  --blur: 14px;
+  --primary: #0b3d68;
+  --primary-2: #082a48;
+  --primary-grad: linear-gradient(135deg, #10508a 0%, #072439 100%);
+  --primary-soft: rgba(11, 61, 104, 0.08);
+  --accent: #a9852f;
+  --accent-2: #8a6b21;
+  --accent-grad: linear-gradient(135deg, #c8a13f 0%, #8a6b21 100%);
+  --accent-soft: rgba(169, 133, 47, 0.14);
+  --ok: #14804a;
+  --ok-2: #0f6339;
+  --ok-soft: rgba(20, 128, 74, 0.12);
+  --deny: #b3341c;
+  --deny-2: #8f2814;
+  --deny-soft: rgba(179, 52, 28, 0.1);
+  --token-bg: rgba(11, 31, 51, 0.05);
+  --shadow-sm: 0 1px 2px rgba(11, 31, 51, 0.07);
+  --shadow-md: 0 1px 2px rgba(11, 31, 51, 0.06), 0 10px 24px -12px rgba(11, 31, 51, 0.22);
+  --shadow-lg: 0 24px 48px -16px rgba(11, 31, 51, 0.3), 0 4px 14px rgba(11, 31, 51, 0.1);
+  --ring: 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  --glow-primary: 0 0 0 1px rgba(255, 255, 255, 0.08) inset, 0 6px 18px -6px rgba(8, 42, 72, 0.55);
+  --glow-accent: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 6px 16px -6px rgba(138, 107, 33, 0.5);
+  --radius: 10px;
+  --radius-sm: 8px;
+  --radius-lg: 14px;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink: #eef0fb;
-    --ink-soft: #a6acc9;
-    --ink-faint: #6b7292;
-    --bg-a: #171233;
-    --bg-b: #0e1f27;
-    --bg-c: #26132a;
-    --surface: rgba(24, 26, 46, 0.55);
-    --surface-raised: rgba(30, 33, 56, 0.65);
-    --surface-solid: #14162a;
+    --ink: #e9edf2;
+    --ink-soft: #a9b6c6;
+    --ink-faint: #718297;
+    --bg-a: #0a1520;
+    --bg-b: #0b1c2b;
+    --bg-c: #0a1a1a;
+    --surface: rgba(16, 27, 41, 0.86);
+    --surface-raised: rgba(20, 33, 49, 0.95);
+    --surface-solid: #0e1c2b;
     --line: rgba(255, 255, 255, 0.08);
     --line-soft: rgba(255, 255, 255, 0.06);
-    --primary: #9b8dff;
-    --primary-2: #7d6bff;
-    --primary-grad: linear-gradient(135deg, #8b7bff 0%, #5a43e0 100%);
-    --primary-soft: rgba(139, 123, 255, 0.16);
-    --accent: #2fe3ac;
-    --accent-2: #1ec895;
-    --accent-grad: linear-gradient(135deg, #35eeb5 0%, #12b384 100%);
-    --accent-soft: rgba(47, 227, 172, 0.14);
-    --ok: #2fe3ac;
-    --ok-2: #1ec895;
-    --ok-soft: rgba(47, 227, 172, 0.14);
-    --deny: #ff8f66;
-    --deny-2: #f4794a;
-    --deny-soft: rgba(255, 143, 102, 0.14);
+    --primary: #6fa8dc;
+    --primary-2: #4f8cc4;
+    --primary-grad: linear-gradient(135deg, #2f6ba3 0%, #16324a 100%);
+    --primary-soft: rgba(111, 168, 220, 0.14);
+    --accent: #d3ac52;
+    --accent-2: #b9922f;
+    --accent-grad: linear-gradient(135deg, #d3ac52 0%, #96721f 100%);
+    --accent-soft: rgba(211, 172, 82, 0.16);
+    --ok: #3fbf80;
+    --ok-2: #2f9e68;
+    --ok-soft: rgba(63, 191, 128, 0.16);
+    --deny: #e37658;
+    --deny-2: #c85f42;
+    --deny-soft: rgba(227, 118, 88, 0.16);
     --token-bg: rgba(255, 255, 255, 0.05);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.35), 0 14px 32px -12px rgba(90, 67, 224, 0.35);
-    --shadow-lg: 0 20px 50px -10px rgba(90, 67, 224, 0.4), 0 4px 14px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.4), 0 12px 28px -12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 24px 48px -14px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.45);
     --ring: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-    --glow-primary: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 8px 26px -6px rgba(139, 123, 255, 0.55);
-    --glow-accent: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 8px 24px -6px rgba(47, 227, 172, 0.55);
+    --glow-primary: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 8px 22px -6px rgba(47, 107, 163, 0.55);
+    --glow-accent: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 8px 20px -6px rgba(185, 146, 47, 0.5);
   }
 }
 
 :root[data-theme="dark"] {
-  --ink: #eef0fb;
-  --ink-soft: #a6acc9;
-  --ink-faint: #6b7292;
-  --bg-a: #171233;
-  --bg-b: #0e1f27;
-  --bg-c: #26132a;
-  --surface: rgba(24, 26, 46, 0.55);
-  --surface-raised: rgba(30, 33, 56, 0.65);
-  --surface-solid: #14162a;
+  --ink: #e9edf2;
+  --ink-soft: #a9b6c6;
+  --ink-faint: #718297;
+  --bg-a: #0a1520;
+  --bg-b: #0b1c2b;
+  --bg-c: #0a1a1a;
+  --surface: rgba(16, 27, 41, 0.86);
+  --surface-raised: rgba(20, 33, 49, 0.95);
+  --surface-solid: #0e1c2b;
   --line: rgba(255, 255, 255, 0.08);
   --line-soft: rgba(255, 255, 255, 0.06);
-  --primary: #9b8dff;
-  --primary-2: #7d6bff;
-  --primary-grad: linear-gradient(135deg, #8b7bff 0%, #5a43e0 100%);
-  --primary-soft: rgba(139, 123, 255, 0.16);
-  --accent: #2fe3ac;
-  --accent-2: #1ec895;
-  --accent-grad: linear-gradient(135deg, #35eeb5 0%, #12b384 100%);
-  --accent-soft: rgba(47, 227, 172, 0.14);
-  --ok: #2fe3ac;
-  --ok-2: #1ec895;
-  --ok-soft: rgba(47, 227, 172, 0.14);
-  --deny: #ff8f66;
-  --deny-2: #f4794a;
-  --deny-soft: rgba(255, 143, 102, 0.14);
+  --primary: #6fa8dc;
+  --primary-2: #4f8cc4;
+  --primary-grad: linear-gradient(135deg, #2f6ba3 0%, #16324a 100%);
+  --primary-soft: rgba(111, 168, 220, 0.14);
+  --accent: #d3ac52;
+  --accent-2: #b9922f;
+  --accent-grad: linear-gradient(135deg, #d3ac52 0%, #96721f 100%);
+  --accent-soft: rgba(211, 172, 82, 0.16);
+  --ok: #3fbf80;
+  --ok-2: #2f9e68;
+  --ok-soft: rgba(63, 191, 128, 0.16);
+  --deny: #e37658;
+  --deny-2: #c85f42;
+  --deny-soft: rgba(227, 118, 88, 0.16);
   --token-bg: rgba(255, 255, 255, 0.05);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.35), 0 14px 32px -12px rgba(90, 67, 224, 0.35);
-  --shadow-lg: 0 20px 50px -10px rgba(90, 67, 224, 0.4), 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.4), 0 12px 28px -12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 24px 48px -14px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.45);
   --ring: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-  --glow-primary: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 8px 26px -6px rgba(139, 123, 255, 0.55);
-  --glow-accent: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 8px 24px -6px rgba(47, 227, 172, 0.55);
+  --glow-primary: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 8px 22px -6px rgba(47, 107, 163, 0.55);
+  --glow-accent: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 8px 20px -6px rgba(185, 146, 47, 0.5);
 }
 
 * {
@@ -122,16 +122,13 @@ body {
   margin: 0;
   min-height: 100vh;
   background-color: var(--bg-a);
-  background-image: radial-gradient(760px 520px at 8% -8%, color-mix(in srgb, var(--primary) 38%, transparent) 0%, transparent 65%),
-    radial-gradient(700px 560px at 100% 0%, color-mix(in srgb, var(--accent) 30%, transparent) 0%, transparent 60%),
-    radial-gradient(820px 640px at 90% 100%, color-mix(in srgb, var(--bg-c) 85%, transparent) 0%, transparent 62%),
-    linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 100%);
+  background-image: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 55%, var(--bg-c) 100%);
   background-attachment: fixed;
   color: var(--ink);
   font-family: "Inter", system-ui, -apple-system, sans-serif;
   font-size: 14.5px;
   line-height: 1.5;
-  padding: 28px 24px 48px;
+  padding: 0 24px 48px;
   font-feature-settings: "tnum" 1, "cv05" 1;
 }
 
@@ -160,6 +157,7 @@ h3 {
 .shell {
   max-width: 1180px;
   margin: 0 auto;
+  padding-top: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -172,7 +170,11 @@ header {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px 20px;
-  padding: 4px 4px 8px;
+  margin: 0 -24px 4px;
+  padding: 16px 24px;
+  background: var(--primary-grad);
+  border-bottom: 3px solid var(--accent);
+  box-shadow: var(--shadow-md);
 }
 
 .brand {
@@ -187,27 +189,27 @@ header {
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
-  background: var(--primary-grad);
-  color: #fff;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
   font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.01em;
+  font-size: 13px;
+  letter-spacing: 0.03em;
   font-family: "Inter", sans-serif;
   flex: none;
-  box-shadow: var(--glow-primary);
 }
 
 .brand h1 {
   font-size: 19px;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+  letter-spacing: -0.01em;
+  color: #fff;
 }
 
 .brand .tag {
   display: block;
-  color: var(--ink-faint);
+  color: rgba(255, 255, 255, 0.68);
   font-size: 12.5px;
   font-weight: 500;
   margin-top: 1px;
@@ -465,7 +467,7 @@ input:focus-visible {
 .pane-head .avatar {
   width: 32px;
   height: 32px;
-  border-radius: 10px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -500,7 +502,7 @@ input:focus-visible {
   font-size: 10px;
   font-weight: 700;
   padding: 5px 11px;
-  border-radius: 20px;
+  border-radius: 4px;
   letter-spacing: 0.03em;
 }
 .badge.ungoverned {
@@ -564,7 +566,7 @@ input:focus-visible {
 
 .msg-body {
   padding: 11px 15px;
-  border-radius: 16px;
+  border-radius: 10px;
   font-size: 13px;
   line-height: 1.6;
   white-space: pre-wrap;
@@ -573,16 +575,14 @@ input:focus-visible {
 .msg.user .msg-body {
   background: var(--primary-grad);
   color: #fff;
-  border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 3px;
   font-family: "Inter", sans-serif;
   box-shadow: var(--glow-primary);
 }
 .msg.agent .msg-body {
   background: var(--surface-raised);
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
   border: 1px solid var(--line-soft);
-  border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 3px;
   font-family: "Inter", sans-serif;
   box-shadow: var(--shadow-sm);
 }
@@ -637,7 +637,7 @@ input:focus-visible {
 .composer input {
   flex: 1;
   padding: 11px 16px;
-  border-radius: 24px;
+  border-radius: 8px;
   border: 1px solid var(--line-soft);
   background: color-mix(in srgb, var(--surface-solid) 55%, transparent);
   color: var(--ink);
@@ -654,17 +654,17 @@ input:focus-visible {
 .composer button {
   appearance: none;
   border: none;
-  background: var(--accent-grad);
+  background: var(--primary-grad);
   color: #fff;
   font: inherit;
   font-weight: 700;
   font-size: 13px;
   letter-spacing: -0.005em;
   padding: 11px 20px;
-  border-radius: 24px;
+  border-radius: 8px;
   cursor: pointer;
   flex: none;
-  box-shadow: var(--glow-accent);
+  box-shadow: var(--glow-primary);
   transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.15s ease;
 }
 .composer button:disabled {
@@ -694,7 +694,7 @@ input:focus-visible {
 .shared-composer input {
   flex: 1;
   padding: 11px 16px;
-  border-radius: 24px;
+  border-radius: 8px;
   border: 1px solid var(--line-soft);
   background: color-mix(in srgb, var(--surface-solid) 55%, transparent);
   color: var(--ink);
@@ -710,17 +710,17 @@ input:focus-visible {
 .shared-composer button {
   appearance: none;
   border: none;
-  background: var(--accent-grad);
+  background: var(--primary-grad);
   color: #fff;
   font: inherit;
   font-weight: 700;
   font-size: 13px;
   letter-spacing: -0.005em;
   padding: 11px 20px;
-  border-radius: 24px;
+  border-radius: 8px;
   cursor: pointer;
   flex: none;
-  box-shadow: var(--glow-accent);
+  box-shadow: var(--glow-primary);
   transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.15s ease;
 }
 .shared-composer button:disabled {
@@ -751,7 +751,7 @@ input:focus-visible {
   font-weight: 500;
   font-size: 12px;
   padding: 7px 14px;
-  border-radius: 20px;
+  border-radius: 6px;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.12s ease;
@@ -832,10 +832,9 @@ footer {
 .auth-card {
   width: 100%;
   max-width: 400px;
-  background: var(--surface);
-  backdrop-filter: blur(var(--blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+  background: var(--surface-raised);
   border: 1px solid var(--line);
+  border-top: 3px solid var(--accent);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg), var(--ring);
   padding: 36px 32px;
@@ -851,6 +850,9 @@ footer {
   height: 48px;
   font-size: 16px;
   margin-bottom: 4px;
+  border-radius: 50%;
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .auth-card h1 {
@@ -874,7 +876,7 @@ footer {
   font-size: 13.5px;
   letter-spacing: -0.005em;
   padding: 12px 28px;
-  border-radius: 24px;
+  border-radius: 8px;
   cursor: pointer;
   margin-top: 8px;
   box-shadow: var(--glow-primary);
@@ -892,19 +894,16 @@ footer {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--surface);
-  backdrop-filter: blur(var(--blur)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
-  border: 1px solid var(--line);
-  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-sm);
   padding: 8px 8px 8px 16px;
-  box-shadow: var(--shadow-sm), var(--ring);
 }
 
 .user-badge-name {
   font-size: 13px;
   font-weight: 600;
-  color: var(--ink);
+  color: #fff;
   max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -913,18 +912,19 @@ footer {
 
 .user-badge-signout {
   appearance: none;
-  border: 1px solid var(--line-soft);
-  background: color-mix(in srgb, var(--surface-solid) 55%, transparent);
-  color: var(--ink-soft);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
   font: inherit;
   font-weight: 600;
   font-size: 12px;
   padding: 7px 14px;
-  border-radius: 10px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 .user-badge-signout:hover {
-  color: var(--deny-2);
-  border-color: color-mix(in srgb, var(--deny) 40%, var(--line));
+  color: #fff;
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.08);
 }
