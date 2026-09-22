@@ -4,6 +4,23 @@ Shows the progression from ungoverned to governed agent tool access using
 WSO2 Agent Manager as a gateway in front of both the LLM and the MCP
 server.
 
+## Session outline
+
+Four modules, each adding a governance layer on top of the last —
+**no agent code changes at any stage**, only Agent Manager configuration:
+
+| Module | Duration | Governs | Key moment |
+|---|---|---|---|
+| [01 — LLM Governance](01-llm-governance/README.md) | ~20 min | What the model says and costs: PII masking, cost-based rate limiting, per-agent prompt decorators on the LLM gateway. | Same LLM gateway, two agents, two different appended compliance/audit lines — purely from which decorator is attached. |
+| [02 — MCP Tool Governance](02-mcp-tool-governance/README.md) | ~15 min | Routes MCP tool calls through Agent Manager's MCP gateway (shared API Key). No per-agent policy yet. | Both agents now reach the Accounts MCP server only through the gateway — but still share one key, so tool access is still unrestricted. |
+| [03 — AgentID and OAuth2](03-agentid-and-oauth2/README.md) | ~35 min | **Part A:** OAuth2/Asgardeo secures the `/chat` endpoint itself (caller identity). **Part B:** each agent gets its own AgentID identity; Agent Manager's MCP gateway enforces per-agent, per-tool policy. | Identical prompt ("open a savings account for cust-2") sent to both agents: Account Assistant succeeds, Customer Support is now **denied** — same code, only the AgentID role differs. |
+| [04 — Agent Catalog](04-agent-catalog/README.md) | ~15 min | Publishing a governed agent's build as a reusable, versioned Agent Kind. Code is reused; configuration, secrets, and AgentID identity are not. | A new agent created from the Kind starts with **zero MCP tool access** until its own AgentID is walked through Module 03 Part B again. |
+
+See [`demo_script.md`](demo_script.md) for the exact prompts to run live at
+each stage, and [`DEMO_SCENARIO.md`](DEMO_SCENARIO.md) for the full
+narrative walkthrough (talking points, before/after tables, caveats) behind
+each module.
+
 ## Agents
 
 - **Customer Support Agent** (`agents/customer_support/`) - general
@@ -90,7 +107,7 @@ curl -X POST http://localhost:8000/chat \
 
 Reuse the same `session_id` across calls to keep conversation history.
 
-## 3. Switch an agent to governed mode
+## 3. Switch an agent to governed mode (local, manual env vars)
 
 In `.env`, set `LLM_GATEWAY_BASE_URL`/`LLM_GATEWAY_API_KEY` to route the
 LLM through Agent Manager. Restart the agent — no code change.
@@ -111,26 +128,64 @@ Modules 02–03:
   `MCP_GATEWAY_URL` plus `AMP_AGENTID_CLIENT_ID` /
   `AMP_AGENTID_CLIENT_SECRET` / `AMP_AGENTID_TOKEN_ENDPOINT` /
   `AMP_AGENTID_SCOPES`, and leave `MCP_GATEWAY_API_KEY` unset (see each
-  agent's `.env.example` for the exact fields). At startup the agent
-  mints its own OAuth2 access token via client-credentials grant, scoped
-  to `MCP_GATEWAY_URL` (RFC 8707 `resource` parameter), and uses that
-  token as a Bearer header on every MCP call — see
-  `_mint_agentid_token()` in each agent's `agent.py`. The Accounts MCP
-  server from step 1 must be registered behind the MCP gateway in Agent
-  Manager, with tool-access policy configured per AgentID client.
+  agent's own README for the exact fields). At startup the agent mints
+  its own OAuth2 access token via client-credentials grant, scoped to
+  `MCP_GATEWAY_URL` (RFC 8707 `resource` parameter), and uses that token
+  as a Bearer header on every MCP call — see `_mint_agentid_token()` in
+  each agent's `agent.py`. The Accounts MCP server from step 1 must be
+  registered behind the MCP gateway in Agent Manager, with tool-access
+  policy configured per AgentID client.
 
 Call the agent the same way as in direct mode.
 
-The above is the manual, local-run version of these env vars. When an
-agent is deployed to Agent Manager and bound to a provider/MCP server in
-the console, Agent Manager injects the matching env vars into the
-running agent itself (`LLM_GATEWAY_*`, and either `MCP_GATEWAY_API_KEY`
-or `AMP_AGENTID_CLIENT_*` depending on the MCP server's security scheme)
-— no manual `.env` edit needed there.
+Full env var reference: [Customer Support](agents/customer_support/README.md#env-vars),
+[Account Assistant](agents/account_assistant/README.md#env-vars).
 
-See [Module 01](01-llm-governance/README.md), [Module 02](02-mcp-tool-governance/README.md),
-and [Module 03](03-agentid-and-oauth2/README.md) for the full walkthrough of
-configuring each governance layer in Agent Manager.
+## 4. Deploying to Agent Manager
+
+Both agents deploy as **Platform-Hosted Agents** — Agent Manager builds
+and runs the agent itself from source, rather than proxying to an
+externally-hosted one. Deploy fields are identical for both (only Display
+Name and Project Path differ):
+
+| Field | Customer Support | Account Assistant |
+|---|---|---|
+| Agent Interface | `Chat Agent` (`POST /chat`, port 8000) | same |
+| Project Path | `/agents/customer_support` | `/agents/account_assistant` |
+| Language / Version | `Python` / `3.11` | same |
+| Start Command | `python main.py` | same |
+
+Once deployed, Agent Manager injects the governed-mode env vars for you
+as you bind the agent to providers/servers in the console — **no manual
+`.env` edit for a deployed agent**:
+
+1. **Add Agent → Platform-Hosted Agent**, fill in the table above. At
+   initial registration only `OPENAI_API_KEY` (as a secret) and
+   `MCP_SERVER_URL`/`PORT=8000` need to be entered by hand — this is the
+   direct/ungoverned starting point ([Module 01](01-llm-governance/README.md)).
+2. Bind the agent to an LLM provider registered in Agent Manager → it
+   injects `LLM_GATEWAY_BASE_URL`/`LLM_GATEWAY_API_KEY` for you.
+3. Bind the agent to the org-level MCP server ([Module 02](02-mcp-tool-governance/README.md),
+   registered with **API Key** security) → it injects `MCP_GATEWAY_URL` +
+   `MCP_GATEWAY_API_KEY`. Every agent bound this way shares the same key —
+   no per-agent tool policy yet.
+4. To move to AgentID-governed MCP ([Module 03, Part B](03-agentid-and-oauth2/README.md)):
+   switch that MCP server's security scheme to **OAuth2**, look up the
+   agent's own **Agent ID** in the console, and assign it a role scoped to
+   the tools it should be allowed to call. Agent Manager then swaps
+   `MCP_GATEWAY_API_KEY` out for that agent's own `AMP_AGENTID_CLIENT_*`
+   vars.
+5. To add caller-identity OAuth2 on `/chat` itself ([Module 03, Part A](03-agentid-and-oauth2/README.md)):
+   select **OAuth2** as the agent's security scheme and pick the
+   registered Asgardeo key manager — no env var change needed.
+6. **Deploy.**
+
+Step-by-step console screens, exact role/scope names, and the full
+env-var-injection table are in each agent's own README
+([Customer Support](agents/customer_support/README.md#deploy-to-agent-manager),
+[Account Assistant](agents/account_assistant/README.md#deploy-to-agent-manager))
+and in [Module 01](01-llm-governance/README.md), [Module 02](02-mcp-tool-governance/README.md),
+and [Module 03](03-agentid-and-oauth2/README.md).
 
 ## Demo script
 
